@@ -1,0 +1,36 @@
+<section class="w-100 p-4 pb-4 d-flex justify-content-center align-items-center flex-column">
+  <div>
+    <div class="input-group rounded">
+      <input type="text"
+      [(ngModel)]="text"
+      (ngModelChange)="search()"
+      class="form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon">
+      <button type="button" (click)="search()" class="btn btn-primary" data-mdb-button-initialized="true">Поиск</button>
+      <div class="input-group rounded">
+        <select [(ngModel)]="color" class="form-control form-control-lg" >
+            <option disabled selected value="none">Choose color</option>
+            <option value="none">None color</option>
+            <option value="white">white</option>
+            <option value="orange">orange</option>
+            <option value="green">green</option>
+            <option value="sky blue">sky blue</option>
+            <option value="blue">blue</option>
+            <option value="violet">violet</option>
+            <option value="purple">purple</option>
+            <option value="silver">silver</option>
+            <option value="red">red</option>
+            <option value="black">black</option>
+            <option value="teal">teal</option>
+            <option value="gold">gold</option>
+            <option value="tan">tan</option>
+        </select>
+    </div>
+    </div>
+  </div>
+</section>
+<br><br>
+@for(product of products; track product.id){
+  <app-product-card
+  [product]="product"
+></app-product-card>
+}

@@ -1,0 +1,26 @@
+<!-- <head>
+    <meta charset="UTF-8">
+</head>
+@if(product){
+<div class="container">1000 руб</div>
+    <div class="size-selection">
+        <h2>Категория: fsdfsfsd</h2>
+    </div>
+    <div>Описание пиццы: fhsbfssf</div>
+    <br><br>
+    <button class="btn-add">Добавить в корзину</button>
+} -->
+
+<div class="card">
+    <h2> {{product.name}}</h2>
+    <p><strong>Price:</strong> {{product.price}}</p>
+    <p><strong>Date:</strong> {{product.date}}</p>
+    <p><strong>Description:</strong> {{product.description}}</p>
+    <ul>
+        @for(sku of product.skuList; track sku.id){
+            <div><strong>Color:</strong> {{sku.color}}</div>
+            <div><strong>Access:</strong> {{sku.access}}</div>
+            <br>
+        }
+    </ul>
+</div>

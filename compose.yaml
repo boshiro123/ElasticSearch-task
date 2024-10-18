@@ -1,0 +1,77 @@
+version: '3.8'
+services:
+
+  postgres:
+    container_name: test-db
+    image: postgres:16
+    env_file: ./.env
+    environment:
+      POSTGRES_USER: ${POSTGRESDB_USER}
+      POSTGRES_PASSWORD: ${POSTGRESDB_ROOT_PASSWORD}
+      PGDATA: /var/lib/postgresql/data
+      POSTGRES_DB: ${POSTGRESDB_DATABASE}
+    volumes:
+      - postgres:/data/postgres
+    ports:
+      - ${POSTGRESDB_LOCAL_PORT}:${POSTGRESDB_DOCKER_PORT}
+    restart: unless-stopped
+
+  elasticsearch:
+    image: elasticsearch:8.15.1
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1000m"
+        max-file: "10"
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - node.name=elastic
+      - xpack.security.enabled=true
+      - ELASTIC_PASSWORD=root
+    volumes:
+      - ./elasticsearch_data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+      - "9600:9600"
+
+  kibana:
+    image: kibana:8.15.1
+    container_name: kibana
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_PASSWORD=root # Пароль для подключения к elasticsearch
+    ports:
+      - 5601:5601
+    depends_on:
+      - elasticsearch
+
+
+  backend:
+    container_name: spring-backend
+    build: .
+    ports:
+      - ${SPRING_LOCAL_PORT}:${SPRING_DOCKER_PORT}
+    env_file: .env
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:${POSTGRESDB_DOCKER_PORT}/${POSTGRESDB_DATABASE}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRESDB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRESDB_ROOT_PASSWORD}
+    depends_on:
+      - postgres
+      - elasticsearch
+
+  frontend:
+    container_name: angular-frontend
+    build:
+      context: ${FRONTEND_PROJECT_PATH}
+      dockerfile: Dockerfile
+    ports:
+      - ${ANGULAR_LOCAL_PORT}:${ANGULAR_DOCKER_PORT}
+    env_file: .env
+
+volumes:
+  elasticsearch:
+  postgres:
+    driver: local
+

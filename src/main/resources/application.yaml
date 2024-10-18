@@ -1,0 +1,31 @@
+application:
+  filter:
+    enabled: true
+
+spring:
+  config:
+    import: optional:file:.env[.properties]
+  datasource:
+    url: jdbc:postgresql://localhost:${POSTGRESDB_LOCAL_PORT}/${POSTGRESDB_DATABASE}
+    username: ${POSTGRESDB_USER}
+    password: ${POSTGRESDB_ROOT_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  elasticsearch:
+    rest:
+      uris: http://elasticsearch:9200
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  liquibase:
+    change-log: db/changelog/main-changelog.xml
+    enabled: true
+
+
+springdoc:
+  override-with-generic-response: false
